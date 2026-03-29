@@ -11,7 +11,7 @@
         <h3>☕ Bem-vindo</h3>
         <p>Identifique-se para continuar</p>
         
-        <input id="nome" type="text" placeholder="Seu nome ou 'admin'" autofocus style="width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box;">
+        <input id="nome" type="text" placeholder="seu nome" autofocus style="width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box;">
         
         <input id="senha" type="password" placeholder="Senha (apenas para admin)" style="width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; display: none;">
         
@@ -26,7 +26,7 @@
 
         // Mostrar campo de senha se digitar "admin"
         inputNome.addEventListener("input", () => {
-            if(inputNome.value.toLowerCase() === "admin") {
+            if(inputNome.value.toLowerCase() === "ramos") {
                 inputSenha.style.display = "block";
             } else {
                 inputSenha.style.display = "none";
