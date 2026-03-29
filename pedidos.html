@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - Café App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="container-flex">
+
+    <div class="sidebar">
+        <h2 style="font-size: 1.2rem;">📦 Meus Pedidos</h2>
+        <hr style="margin: 20px 0; opacity: 0.2;">
+        
+        <button onclick="window.location.href='explorar.html'" style="background: rgba(255,255,255,0.05); width: 100%; margin-bottom: 10px; text-align: left; padding-left: 20px;">
+            🛒 Voltar à Loja
+        </button>
+        <button onclick="location.reload()" style="background: rgba(255,255,255,0.05); width: 100%; margin-bottom: 10px; text-align: left; padding-left: 20px;">
+            🔄 Atualizar
+        </button>
+
+        <button id="btnSair" style="margin-top: 50px; background: #ff4d4d; width: 100%;">🚪 Sair</button>
+    </div>
+
+    <div class="main-content">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h2 style="margin-bottom: 10px;">Acompanhe seus pedidos</h2>
+            <p style="opacity: 0.6; margin-bottom: 30px;">Os pedidos aparecem aqui assim que são confirmados.</p>
+
+            <div id="listaPedidosCliente" class="grid-produtos" style="grid-template-columns: 1fr;">
+                <div class="loader">Carregando seus pedidos na nuvem...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="aviso"></div>
+
+    <script type="module">
+        import { db, ref, onValue } from "./firebase-config.js";
+
+        // 1. VERIFICAÇÃO DE LOGIN
+        const usuarioLogado = localStorage.getItem("usuario");
+        if(!usuarioLogado) window.location.href = "login.html";
+
+        // 2. ESCUTAR PEDIDOS DO FIREBASE
+        const pedidosRef = ref(db, 'pedidos');
+
+        onValue(pedidosRef, (snapshot) => {
+            const data = snapshot.val();
+            const div = document.getElementById("listaPedidosCliente");
+            div.innerHTML = "";
+
+            if (!data) {
+                div.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <p style="opacity: 0.5;">Você ainda não fez nenhum pedido. ☕</p>
+                        <button onclick="window.location.href='explorar.html'" style="margin-top: 15px;">Ir para o Cardápio</button>
+                    </div>`;
+                return;
+            }
+
+            // Converter objeto em array e filtrar apenas os pedidos deste usuário
+            const meusPedidos = [];
+            Object.keys(data).forEach(key => {
+                if (data[key].usuario === usuarioLogado) {
+                    meusPedidos.push({ id: key, ...data[key] });
+                }
+            });
+
+            if (meusPedidos.length === 0) {
+                div.innerHTML = "<p style='text-align:center; opacity:0.5;'>Nenhum pedido encontrado para sua conta.</p>";
+                return;
+            }
+
+            // Inverter para mostrar os mais recentes primeiro
+            meusPedidos.reverse().forEach(p => {
+                const itensTxt = p.itens.map(i => i.nome).join(", ");
+                
+                // Definir cor baseada no status
+                let corStatus = "#orange";
+                if(p.status === "A caminho") corStatus = "#2196F3";
+                if(p.status === "Entregue") corStatus = "var(--verde-principal)";
+
+                div.innerHTML += `
+                    <div class="card" style="margin-bottom: 15px; border-left: 8px solid ${corStatus}; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <span style="font-size: 12px; opacity: 0.5;">Pedido #${p.id.slice(-6)}</span>
+                            <h4 style="margin: 5px 0;">${itensTxt}</h4>
+                            <p style="font-size: 14px;">Total: <b>R$ ${p.total.toFixed(2)}</b> | Pagamento: ${p.pagamento}</p>
+                            <small style="opacity: 0.5;">Realizado em: ${p.data || 'Recentemente'}</small>
+                        </div>
+                        
+                        <div style="text-align: right; min-width: 150px;">
+                            <span class="status ${p.status.toLowerCase().replace(" ", "-")}" 
+                                  style="padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; display: inline-block;">
+                                ${p.status === 'Entregue' ? '✔️ ' + p.status : '⏳ ' + p.status}
+                            </span>
+                        </div>
+                    </div>`;
+            });
+        });
+
+        // Logout
+        document.getElementById("btnSair").onclick = () => {
+            localStorage.clear();
+            window.location.href = "login.html";
+        };
+    </script>
+
+    <style>
+        /* Estilos específicos para os badges de status */
+        .status.preparando { background: #fff3e0; color: #ef6c00; }
+        .status.a-caminho { background: #e3f2fd; color: #1565c0; }
+        .status.entregue { background: #e8f5e9; color: #2e7d32; }
+        
+        .loader {
+            text-align: center;
+            padding: 50px;
+            opacity: 0.6;
+            font-style: italic;
+        }
+    </style>
+</body>
+</html>

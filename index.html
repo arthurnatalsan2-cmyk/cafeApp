@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starbucks - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="circulo"></div>
+    <header class="header">
+        <img class="logo" src="img/logo.png" alt="logo">
+        <div class="menu-container">
+            <div class="container" onclick="myFunction(this)">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+            <div class="menus">
+                <ul class="menu-list">
+                    <li><a href="#" onclick="irHome()">Home</a></li>
+                    <li><a href="#" onclick="irExplorar()">Produtos</a></li>
+                    <li><a href="admin.html">Painel Admin</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content" style="display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap;">
+        <div class="caixa-texto">
+            <h2 style="font-size: 3rem; line-height: 1;">It's not just coffee, it's <span style="color: var(--verde-principal); font-weight: 800;">Starbucks</span></h2>
+            <p>Experimente o melhor café com estilo e qualidade.</p>
+            <button onclick="irExplorar()">Explorar Agora</button>
+        </div>
+        <div class="caixa-imagem">
+            <img class="starbucks" src="./img/img1.png" alt="Copo Starbucks">
+        </div>
+    </div>
+
+    <script>
+        function myFunction(x) {
+            x.classList.toggle("change");
+            document.querySelector(".menus").classList.toggle("active");
+        }
+
+        function irExplorar() {
+            const user = localStorage.getItem("usuario");
+            window.location.href = user ? "explorar.html" : "login.html";
+        }
+
+        function irHome() { window.scrollTo({ top: 0, behavior: "smooth" }); }
+    </script>
+</body>
+</html>

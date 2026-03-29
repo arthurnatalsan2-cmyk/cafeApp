@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Café App - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-container">
+    <div class="card login-box" style="width: 320px; margin: 100px auto; text-align: center;">
+        <h3>☕ Bem-vindo</h3>
+        <p>Identifique-se para continuar</p>
+        
+        <input id="nome" type="text" placeholder="Seu nome ou 'admin'" autofocus style="width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box;">
+        
+        <input id="senha" type="password" placeholder="Senha (apenas para admin)" style="width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; display: none;">
+        
+        <button onclick="entrar()" style="width: 100%; margin-top: 15px; padding: 12px;">Entrar</button>
+        
+        <p style="font-size: 12px; opacity: 0.5; margin-top: 20px;">Dica: Digite <b>admin</b> para gerenciar a loja.</p>
+    </div>
+
+    <script>
+        const inputNome = document.getElementById("nome");
+        const inputSenha = document.getElementById("senha");
+
+        // Mostrar campo de senha se digitar "admin"
+        inputNome.addEventListener("input", () => {
+            if(inputNome.value.toLowerCase() === "admin") {
+                inputSenha.style.display = "block";
+            } else {
+                inputSenha.style.display = "none";
+            }
+        });
+
+        function entrar() {
+            const nome = inputNome.value.trim();
+            const senha = inputSenha.value.trim();
+
+            if(!nome) { 
+                alert("Por favor, digite seu nome"); 
+                return; 
+            }
+
+            // LÓGICA DE LOGIN ADMIN
+            if(nome.toLowerCase() === "admin") {
+                // Aqui você define a senha do seu admin (ex: 123)
+                if(senha === "123") {
+                    localStorage.setItem("usuario", "Administrador");
+                    localStorage.setItem("isAdmin", "true"); // CHAVE VITAL
+                    window.location.href = "admin.html";
+                } else {
+                    alert("Senha de administrador incorreta!");
+                }
+                return;
+            }
+
+            // LÓGICA DE LOGIN CLIENTE COMUM
+            localStorage.setItem("usuario", nome);
+            localStorage.setItem("isAdmin", "false"); // Garante que cliente não é admin
+            window.location.href = "explorar.html";
+        }
+
+        // Atalho Enter
+        inputNome.addEventListener("keypress", (e) => { if(e.key === "Enter") entrar(); });
+        inputSenha.addEventListener("keypress", (e) => { if(e.key === "Enter") entrar(); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Firebase Cloud</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="container-flex">
+
+    <div class="sidebar">
+        <h2>🛠️ Admin</h2>
+        <hr style="margin: 20px 0; opacity: 0.2;">
+        <button onclick="window.location.href='explorar.html'" style="background: rgba(255,255,255,0.1); width: 100%; margin-bottom: 10px;">Ver Loja</button>
+        <button id="btnSair" style="background: #ff4d4d; width: 100%;">🚪 Sair</button>
+    </div>
+
+    <div class="main-content">
+        <h2>Dashboard Geral (Nuvem)</h2>
+        
+        <div class="grid-produtos" style="margin-bottom: 30px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <div class="card" style="border-left: 5px solid var(--verde-principal);">
+                <p style="opacity: 0.7; font-size: 14px;">Lucro Total (Entregues)</p>
+                <h3 id="lucroTotal">R$ 0,00</h3>
+            </div>
+            <div class="card" style="border-left: 5px solid var(--verde-claro);">
+                <p style="opacity: 0.7; font-size: 14px;">Pedidos Entregues</p>
+                <h3 id="qtdEntregues">0</h3>
+            </div>
+            <div class="card" style="border-left: 5px solid orange;">
+                <p style="opacity: 0.7; font-size: 14px;">Pedidos Pendentes</p>
+                <h3 id="qtdPendentes">0</h3>
+            </div>
+        </div>
+
+        <div class="grid-produtos" style="grid-template-columns: 2fr 1fr; margin-bottom: 30px;">
+            <div class="card">
+                <h4>📊 Faturamento Recente</h4>
+                <canvas id="graficoVendas" height="100"></canvas>
+            </div>
+
+            <div class="card">
+                <h4>➕ Gerenciar Produtos</h4>
+                <input id="nP" placeholder="Nome do Café">
+                <input id="pP" type="number" placeholder="Preço">
+                <input id="imgP" placeholder="URL da Imagem">
+                <button id="btnCadastrar" style="width: 100%; margin-top: 10px;">Cadastrar na Nuvem</button>
+                
+                <h5 style="margin-top: 20px;">Cardápio no Banco:</h5>
+                <div id="listaProdutosAdmin" style="max-height: 150px; overflow-y: auto; font-size: 14px;"></div>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 30px; display: flex; justify-content: space-between;">
+            📦 Fila de Pedidos Real-time
+            <span id="statusSync" style="font-size: 12px; color: var(--verde-principal); font-weight: normal;">🌐 Sincronizado com Google Cloud</span>
+        </h3>
+        <div id="listaPedidos" class="grid-produtos"></div>
+    </div>
+
+    <div id="aviso"></div>
+
+    <script type="module">
+        // 1. IMPORTAÇÕES E CONFIGURAÇÃO
+        import { db, ref, set, onValue, push, update, remove } from "./firebase-config.js";
+
+        // Segurança básica: bloqueia se não for admin
+        if(localStorage.getItem("isAdmin") !== "true") {
+            window.location.href = "login.html";
+        }
+
+        let meuGrafico = null;
+
+        function mostrarAviso(m, tipo = "sucesso") { 
+            const a = document.getElementById("aviso"); 
+            a.innerText = m; 
+            a.className = tipo === "erro" ? "mostrar erro" : "mostrar";
+            setTimeout(() => a.className = "", 3000); 
+        }
+
+        // 2. GESTÃO DE PRODUTOS (FIREBASE)
+        document.getElementById("btnCadastrar").onclick = () => {
+            const nome = document.getElementById("nP").value;
+            const preco = parseFloat(document.getElementById("pP").value);
+            const imagem = document.getElementById("imgP").value || "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=300";
+
+            if(!nome || !preco) return mostrarAviso("Preencha Nome e Preço!", "erro");
+
+            const prodsRef = ref(db, 'produtos');
+            push(prodsRef, { nome, preco, imagem }).then(() => {
+                mostrarAviso("Produto Adicionado!");
+                document.getElementById("nP").value = "";
+                document.getElementById("pP").value = "";
+                document.getElementById("imgP").value = "";
+            });
+        };
+
+        // Escutar produtos (Atualiza a listinha do admin)
+        onValue(ref(db, 'produtos'), (snapshot) => {
+            const produtos = snapshot.val();
+            const div = document.getElementById("listaProdutosAdmin");
+            div.innerHTML = "";
+            if(!produtos) return div.innerHTML = "<p style='opacity:0.5'>Sem produtos.</p>";
+
+            Object.keys(produtos).forEach(key => {
+                const p = produtos[key];
+                const item = document.createElement("div");
+                item.style = "display:flex; justify-content:space-between; align-items:center; padding:5px; border-bottom:1px solid #eee";
+                item.innerHTML = `<span>${p.nome} - R$${p.preco.toFixed(2)}</span> <button class="cancelar" style="padding:2px 6px; font-size:10px; background:#ff4d4d; color:white; border:none; border-radius:4px; cursor:pointer">X</button>`;
+                item.querySelector("button").onclick = () => remove(ref(db, `produtos/${key}`));
+                div.appendChild(item);
+            });
+        });
+
+        // 3. GESTÃO DE PEDIDOS E DASHBOARD (REAL-TIME)
+        onValue(ref(db, 'pedidos'), (snapshot) => {
+            const data = snapshot.val();
+            const listaFull = [];
+            
+            if(data) {
+                Object.keys(data).forEach(key => {
+                    listaFull.push({ fireId: key, ...data[key] });
+                });
+            }
+
+            // Filtros para Dashboard
+            const entregues = listaFull.filter(p => p.status === "Entregue");
+            const pendentes = listaFull.filter(p => p.status !== "Entregue");
+            const lucro = entregues.reduce((acc, p) => acc + (p.total || 0), 0);
+
+            // Atualizar UI das métricas
+            document.getElementById("lucroTotal").innerText = `R$ ${lucro.toFixed(2)}`;
+            document.getElementById("qtdEntregues").innerText = entregues.length;
+            document.getElementById("qtdPendentes").innerText = pendentes.length;
+
+            // Renderizar Fila de Pedidos
+            const divPedidos = document.getElementById("listaPedidos");
+            divPedidos.innerHTML = pendentes.length ? "" : "<p>Fila limpa! ☕</p>";
+
+            pendentes.reverse().forEach(p => {
+                const itensTxt = p.itens.map(i => i.nome).join(", ");
+                const card = document.createElement("div");
+                card.className = "card";
+                card.style.borderTop = "4px solid var(--verde-principal)";
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>👤 ${p.usuario}</b>
+                        <span style="font-size:11px; opacity:0.5;">#${p.fireId.slice(-5)}</span>
+                    </div>
+                    <p style="font-size:13px; margin: 8px 0;">☕ ${itensTxt}</p>
+                    <p style="font-size:12px; margin-bottom:10px;">💳 <b>${p.pagamento || 'PIX'}</b></p>
+                    <b style="color: var(--verde-principal)">R$ ${p.total.toFixed(2)}</b><br><br>
+                    
+                    <select class="status-select">
+                        <option value="Preparando" ${p.status === "Preparando" ? "selected" : ""}>Preparando</option>
+                        <option value="A caminho" ${p.status === "A caminho" ? "selected" : ""}>A caminho</option>
+                        <option value="Entregue">✔️ Finalizar Entrega</option>
+                    </select>
+                `;
+
+                // Listener para mudar status no Firebase
+                card.querySelector(".status-select").onchange = (e) => {
+                    update(ref(db, `pedidos/${p.fireId}`), { status: e.target.value });
+                    mostrarAviso("Status sincronizado!");
+                };
+
+                divPedidos.appendChild(card);
+            });
+
+            // Atualizar Gráfico
+            desenharGrafico(entregues.slice(-10));
+            
+            // Notificação visual de sincronia
+            const syncIcon = document.getElementById("statusSync");
+            syncIcon.style.opacity = "0.5";
+            setTimeout(() => syncIcon.style.opacity = "1", 300);
+        });
+
+        // 4. GRÁFICO (CHART.JS)
+        function desenharGrafico(dadosEntregues) {
+            const ctx = document.getElementById('graficoVendas').getContext('2d');
+            if(meuGrafico) meuGrafico.destroy();
+
+            meuGrafico = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dadosEntregues.map(p => p.fireId.slice(-4)),
+                    datasets: [{
+                        label: 'Vendas Recentes (R$)',
+                        data: dadosEntregues.map(p => p.total),
+                        borderColor: '#017143',
+                        backgroundColor: 'rgba(1, 113, 67, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        // Logout
+        document.getElementById("btnSair").onclick = () => {
+            localStorage.clear();
+            window.location.href = "login.html";
+        };
+    </script>
+</body>
+</html>

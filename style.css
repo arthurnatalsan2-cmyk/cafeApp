@@ -1,0 +1,240 @@
+/* ==========================================================================
+   1. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS
+   ========================================================================== */
+:root {
+    --verde-principal: #017143;
+    --verde-escuro: #014d2e;
+    --verde-claro: #02a55f;
+    --cor-erro: #ff3b3b;
+    --bg-claro: #f1f1f1;
+    --bg-escuro: #121212;
+    --card-claro: #ffffff;
+    --card-escuro: #2a2a2a;
+    --texto-claro: #333333;
+    --texto-escuro: #ffffff;
+    
+    /* Cores de Status */
+    --status-preparando: #fff3cd;
+    --status-caminho: #d1ecf1;
+    --status-entregue: #d4edda;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background 0.4s, color 0.4s, transform 0.3s, opacity 0.4s;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-claro);
+    color: var(--texto-claro);
+    min-height: 100vh;
+}
+
+body.dark {
+    background-color: var(--bg-escuro);
+    color: var(--texto-escuro);
+}
+
+/* ==========================================================================
+   2. COMPONENTES REUTILIZÁVEIS
+   ========================================================================== */
+
+/* Botões Estilizados */
+button {
+    background: var(--verde-principal);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+button.cancelar { background: var(--cor-erro); }
+
+/* Inputs e Seletores */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+body.dark input, body.dark select {
+    background: #1e1e1e;
+    color: white;
+    border-color: #444;
+}
+
+/* Cards */
+.card {
+    background: var(--card-claro);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+body.dark .card {
+    background: var(--card-escuro);
+}
+
+/* Status Badges */
+.status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+.preparando { background: var(--status-preparando); color: #856404; }
+.caminho { background: var(--status-caminho); color: #0c5460; }
+.entregue { background: var(--status-entregue); color: #155724; }
+
+/* ==========================================================================
+   3. LANDING PAGE (STARBUCKS STYLE)
+   ========================================================================== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+}
+
+.logo { width: 70px; }
+
+/* Menu Hambúrguer */
+.bar1, .bar2, .bar3 {
+    width: 30px; height: 4px;
+    background-color: var(--texto-claro);
+    margin: 5px 0;
+}
+body.dark .bar1, body.dark .bar2, body.dark .bar3 { background-color: #fff; }
+
+.change .bar1 { transform: translate(0, 9px) rotate(-45deg); }
+.change .bar2 { opacity: 0; }
+.change .bar3 { transform: translate(0, -9px) rotate(45deg); }
+
+.menus {
+    display: none;
+    position: absolute;
+    top: 70px; right: 5%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+.menus.active { display: block; }
+body.dark .menus { background: var(--card-escuro); }
+.menu-list { list-style: none; }
+.menu-list li a { text-decoration: none; color: inherit; padding: 15px 25px; display: block; }
+
+/* Círculo de Fundo */
+.circulo {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--verde-principal);
+    clip-path: circle(600px at right 800px);
+    z-index: -1;
+}
+
+/* ==========================================================================
+   4. APP / EXPLORAR / ADMIN (LAYOUTS)
+   ========================================================================== */
+
+/* Layout Sidebar + Main */
+.container-flex { display: flex; min-height: 100vh; }
+
+.sidebar {
+    width: 240px;
+    background: linear-gradient(180deg, var(--verde-principal), var(--verde-escuro));
+    color: white;
+    padding: 30px 20px;
+}
+
+.main-content { flex: 1; padding: 30px; }
+
+/* Grid de Produtos */
+.grid-produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Login Box */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ==========================================================================
+   5. RECIBO E DETALHES
+   ========================================================================== */
+.recibo {
+    max-width: 380px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-top: 10px solid var(--verde-principal);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    color: #333;
+}
+
+.recibo::after {
+    content: ""; position: absolute; bottom: -10px; left: 0; right: 0;
+    height: 10px;
+    background: linear-gradient(-45deg, #fff 5px, transparent 0), 
+                linear-gradient(45deg, #fff 5px, transparent 0);
+    background-size: 10px 10px;
+}
+
+/* ==========================================================================
+   6. AVISOS (TOASTS)
+   ========================================================================== */
+#aviso {
+    position: fixed;
+    top: 20px; right: 20px;
+    padding: 15px 25px;
+    border-radius: 12px;
+    background: var(--verde-principal);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    z-index: 9999;
+}
+#aviso.mostrar { opacity: 1; transform: translateY(0); }
+#aviso.erro { background: var(--cor-erro); }
+
+/* ==========================================================================
+   7. ANIMAÇÕES E RESPONSIVIDADE
+   ========================================================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-out { transform: translateX(100px); opacity: 0; }
+.slide-in { transform: translateX(-100px); opacity: 0; }
+
+@media (max-width: 768px) {
+    .container-flex { flex-direction: column; }
+    .sidebar { width: 100%; min-height: auto; }
+    .circulo { clip-path: circle(350px at center bottom); }
+    .header { padding: 15px; }
+}
