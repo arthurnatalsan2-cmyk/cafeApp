@@ -238,3 +238,41 @@ body.dark .menus { background: var(--card-escuro); }
     .circulo { clip-path: circle(350px at center bottom); }
     .header { padding: 15px; }
 }
+/* --- ESTILO PARA CELULAR (Telas menores que 768px) --- */
+@media (max-width: 768px) {
+    
+    /* 1. Ajustar a Sidebar (Menu lateral) */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: row; /* Transforma em barra horizontal no topo */
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+    }
+
+    /* 2. Empilhar os Cards (Grade de produtos) */
+    .grid-produtos {
+        grid-template-columns: 1fr !important; /* Força ficar um abaixo do outro */
+        gap: 15px;
+        padding: 10px;
+    }
+
+    /* 3. Ajustar o conteúdo principal */
+    .main-content {
+        margin-left: 0; /* Remove o espaço da sidebar lateral */
+        padding: 15px;
+    }
+
+    /* 4. Esconder elementos que ocupam muito espaço */
+    canvas#graficoVendas {
+        display: none; /* Gráficos costumam ficar ruins no celular pequeno */
+    }
+
+    /* 5. Aumentar botões para facilitar o toque com o dedo */
+    button, input {
+        height: 45px;
+        font-size: 16px !important;
+    }
+}
