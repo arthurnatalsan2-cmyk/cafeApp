@@ -1,279 +1,343 @@
-/* =========================================
-   1. VARIÁVEIS DE CORES E ANIMAÇÕES (Design Premium)
-   ========================================= */
+/* ==========================================================================
+   1. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS
+   ========================================================================== */
 :root {
-    --bg-color: #F4F1EA; /* Fundo creme bem suave */
-    --card-bg: #FFFFFF;
-    --primary-color: #2C1E16; /* Marrom café bem escuro */
-    --accent-color: #C49A6C; /* Dourado/Caramelo */
-    --accent-hover: #A87B4C;
-    --text-dark: #2D2D2D;
-    --text-muted: #888888;
-    --danger: #E74C3C;
-    --shadow-suave: 0 8px 24px rgba(44, 30, 22, 0.08);
-    --shadow-hover: 0 15px 35px rgba(44, 30, 22, 0.15);
-    --transicao: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --verde-principal: #017143;
+    --verde-escuro: #014d2e;
+    --verde-claro: #02a55f;
+    --cor-erro: #ff3b3b;
+    --bg-claro: #f1f1f1;
+    --bg-escuro: #121212;
+    --card-claro: #ffffff;
+    --card-escuro: #2a2a2a;
+    --texto-claro: #333333;
+    --texto-escuro: #ffffff;
+    
+    /* Cores de Status */
+    --status-preparando: #fff3cd;
+    --status-caminho: #d1ecf1;
+    --status-entregue: #d4edda;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    transition: background 0.4s, color 0.4s, transform 0.3s, opacity 0.4s;
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-dark);
-    display: flex;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-claro);
+    color: var(--texto-claro);
     min-height: 100vh;
 }
 
-/* =========================================
-   2. ANIMAÇÕES
-   ========================================= */
-@keyframes entradaSuave {
-    from { opacity: 0; transform: translateY(30px); }
+body.dark {
+    background-color: var(--bg-escuro);
+    color: var(--texto-escuro);
+}
+
+/* ==========================================================================
+   2. COMPONENTES REUTILIZÁVEIS
+   ========================================================================== */
+
+/* Botões Estilizados */
+button {
+    background: var(--verde-principal);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+button.cancelar { background: var(--cor-erro); }
+
+/* Inputs e Seletores */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+body.dark input, body.dark select {
+    background: #1e1e1e;
+    color: white;
+    border-color: #444;
+}
+
+/* Cards */
+.card {
+    background: var(--card-claro);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+body.dark .card {
+    background: var(--card-escuro);
+}
+
+/* Status Badges */
+.status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+.preparando { background: var(--status-preparando); color: #856404; }
+.caminho { background: var(--status-caminho); color: #0c5460; }
+.entregue { background: var(--status-entregue); color: #155724; }
+
+/* ==========================================================================
+   3. LANDING PAGE (STARBUCKS STYLE)
+   ========================================================================== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+}
+
+.logo { width: 70px; }
+
+/* Menu Hambúrguer */
+.bar1, .bar2, .bar3 {
+    width: 30px; height: 4px;
+    background-color: var(--texto-claro);
+    margin: 5px 0;
+}
+body.dark .bar1, body.dark .bar2, body.dark .bar3 { background-color: #fff; }
+
+.change .bar1 { transform: translate(0, 9px) rotate(-45deg); }
+.change .bar2 { opacity: 0; }
+.change .bar3 { transform: translate(0, -9px) rotate(45deg); }
+
+.menus {
+    display: none;
+    position: absolute;
+    top: 70px; right: 5%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+.menus.active { display: block; }
+body.dark .menus { background: var(--card-escuro); }
+.menu-list { list-style: none; }
+.menu-list li a { text-decoration: none; color: inherit; padding: 15px 25px; display: block; }
+
+/* Círculo de Fundo */
+.circulo {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--verde-principal);
+    clip-path: circle(600px at right 800px);
+    z-index: -1;
+}
+
+/* ==========================================================================
+   4. APP / EXPLORAR / ADMIN (LAYOUTS)
+   ========================================================================== */
+
+/* Layout Sidebar + Main */
+.container-flex { display: flex; min-height: 100vh; }
+
+.sidebar {
+    width: 240px;
+    background: linear-gradient(180deg, var(--verde-principal), var(--verde-escuro));
+    color: white;
+    padding: 30px 20px;
+}
+
+.main-content { flex: 1; padding: 30px; }
+
+/* Grid de Produtos */
+.grid-produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Login Box */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ==========================================================================
+   5. RECIBO E DETALHES
+   ========================================================================== */
+.recibo {
+    max-width: 380px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-top: 10px solid var(--verde-principal);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    color: #333;
+}
+
+.recibo::after {
+    content: ""; position: absolute; bottom: -10px; left: 0; right: 0;
+    height: 10px;
+    background: linear-gradient(-45deg, #fff 5px, transparent 0), 
+                linear-gradient(45deg, #fff 5px, transparent 0);
+    background-size: 10px 10px;
+}
+
+/* ==========================================================================
+   6. AVISOS (TOASTS)
+   ========================================================================== */
+#aviso {
+    position: fixed;
+    top: 20px; right: 20px;
+    padding: 15px 25px;
+    border-radius: 12px;
+    background: var(--verde-principal);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    z-index: 9999;
+}
+#aviso.mostrar { opacity: 1; transform: translateY(0); }
+#aviso.erro { background: var(--cor-erro); }
+
+/* ==========================================================================
+   7. ANIMAÇÕES E RESPONSIVIDADE
+   ========================================================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulseClick {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-    100% { transform: scale(1); }
-}
+.slide-out { transform: translateX(100px); opacity: 0; }
+.slide-in { transform: translateX(-100px); opacity: 0; }
 
-/* =========================================
-   3. MENU LATERAL (PC) E CABEÇALHO
-   ========================================= */
-.sidebar, header {
-    width: 250px;
-    background-color: var(--card-bg);
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    box-shadow: 2px 0 15px rgba(0,0,0,0.03);
-    position: fixed;
-    height: 100vh;
-    z-index: 100;
-}
-
-.nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.nav-menu button, .sidebar button {
-    background-color: transparent;
-    border: 1px solid transparent;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: var(--transicao);
-    text-align: left;
-}
-
-.nav-menu button:hover, .sidebar button:hover {
-    background-color: var(--bg-color);
-    color: var(--primary-color);
-    transform: translateX(5px);
-}
-
-.nav-menu button.active {
-    background-color: var(--primary-color);
-    color: white;
-    box-shadow: 0 4px 12px rgba(44, 30, 22, 0.3);
-}
-
-.btn-sair {
-    margin-top: auto;
-    color: var(--danger) !important;
-    border: 1px solid #fadbd8 !important;
-}
-
-.btn-sair:hover {
-    background-color: var(--danger) !important;
-    color: white !important;
-}
-
-/* =========================================
-   4. ÁREA PRINCIPAL
-   ========================================= */
-.main-content {
-    margin-left: 250px;
-    padding: 40px;
-    flex: 1;
-    animation: entradaSuave 0.8s ease-out;
-}
-
-.grid-produtos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 30px;
-    margin-top: 20px;
-}
-
-/* =========================================
-   5. CARDS DE PRODUTOS
-   ========================================= */
-.card {
-    background: var(--card-bg);
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: var(--shadow-suave);
-    transition: var(--transicao);
-    display: flex;
-    flex-direction: column;
-    border: 1px solid rgba(0,0,0,0.02);
-    animation: entradaSuave 0.6s ease-out forwards;
-}
-
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-hover);
-}
-
-.card-img-container {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-}
-
-.card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-}
-
-.card:hover img {
-    transform: scale(1.1);
-}
-
-.card-info {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-.card-info h3 {
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    margin-bottom: 8px;
-}
-
-.card-info .preco {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--accent-color);
-    margin-bottom: 15px;
-}
-
-.btn-adicionar {
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transicao);
-    margin-top: auto;
-}
-
-.btn-adicionar:hover {
-    background-color: var(--accent-hover);
-    transform: scale(1.02);
-}
-
-.btn-adicionar:active {
-    animation: pulseClick 0.2s;
-}
-
-/* =========================================
-   6. RESPONSIVO (MOBILE) COM EFEITO VIDRO
-   ========================================= */
 @media (max-width: 768px) {
-    body {
-        flex-direction: column;
-    }
-
-    .sidebar, header {
+    .container-flex { flex-direction: column; }
+    .sidebar { width: 100%; min-height: auto; }
+    .circulo { clip-path: circle(350px at center bottom); }
+    .header { padding: 15px; }
+}
+/* --- ESTILO PARA CELULAR (Telas menores que 768px) --- */
+@media (max-width: 768px) {
+    
+    /* 1. Ajustar a Sidebar (Menu lateral) */
+    .sidebar {
         width: 100%;
         height: auto;
-        position: sticky;
-        top: 0;
-        padding: 15px;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        z-index: 1000;
-    }
-
-    .nav-menu {
-        margin-top: 0;
-        flex-direction: row;
-        gap: 10px;
-        overflow-x: auto;
-        padding-bottom: 5px;
-    }
-
-    .nav-menu::-webkit-scrollbar {
-        display: none;
-    }
-
-    .nav-menu button, .sidebar button {
-        white-space: nowrap;
-        padding: 10px 16px;
-        font-size: 14px;
-        border-radius: 20px;
-    }
-
-    .nav-menu button:hover, .sidebar button:hover {
-        transform: none;
-    }
-
-    .main-content {
-        margin-left: 0;
-        padding: 20px 15px;
-    }
-
-    .grid-produtos {
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-    }
-
-    .card-img-container {
-        height: 140px;
-    }
-
-    .card-info {
-        padding: 12px;
-    }
-
-    .card-info h3 {
-        font-size: 1rem;
-    }
-
-    .card-info .preco {
-        font-size: 1.1rem;
-    }
-
-    .btn-adicionar {
+        position: relative;
+        flex-direction: row; /* Transforma em barra horizontal no topo */
+        display: flex;
+        justify-content: space-around;
         padding: 10px;
-        font-size: 0.9rem;
+    }
+
+    /* 2. Empilhar os Cards (Grade de produtos) */
+    .grid-produtos {
+        grid-template-columns: 1fr !important; /* Força ficar um abaixo do outro */
+        gap: 15px;
+        padding: 10px;
+    }
+
+    /* 3. Ajustar o conteúdo principal */
+    .main-content {
+        margin-left: 0; /* Remove o espaço da sidebar lateral */
+        padding: 15px;
+    }
+
+    /* 4. Esconder elementos que ocupam muito espaço */
+    canvas#graficoVendas {
+        display: none; /* Gráficos costumam ficar ruins no celular pequeno */
+    }
+
+    /* 5. Aumentar botões para facilitar o toque com o dedo */
+    button, input {
+        height: 45px;
+        font-size: 16px !important;
+    }
+}
+/* --- AJUSTE PARA CELULAR (Mobile) --- */
+@media (max-width: 768px) {
+    
+    /* 1. Organiza o menu do topo (onde os botões estavam bagunçados) */
+    .sidebar, .nav-menu, header {
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+        display: flex !important;
+        flex-wrap: wrap !important; /* ISSO faz os botões pularem linha */
+        justify-content: center !important;
+        gap: 8px !important;
+        padding: 10px !important;
+        margin: 0 !important;
+    }
+
+    /* 2. Ajusta os botões individualmente para caberem 2 por linha */
+    .sidebar button, .nav-menu button, .nav-item {
+        flex: 1 1 45% !important; /* Ocupa quase metade da tela cada um */
+        min-width: 140px !important;
+        height: 50px !important;
+        font-size: 13px !important;
+        padding: 5px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 8px !important;
+    }
+
+    /* 3. O botão de SAIR fica em destaque sozinho embaixo */
+    .btn-sair, button[onclick*="logout"] {
+        flex: 1 1 95% !important; /* Ocupa a linha toda */
+        background-color: #ff4d4d !important;
+        margin-top: 5px !important;
+    }
+
+    /* 4. Ajusta o conteúdo principal para não ficar "esmagado" */
+    .main-content {
+        margin-left: 0 !important; /* Remove a margem da sidebar de PC */
+        padding: 15px !important;
+        width: 100% !important;
+    }
+
+    /* 5. Deixa os produtos (como o Arroz/Café) em uma única coluna */
+    .grid-produtos, .container-cards {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 20px !important;
+    }
+
+    .card {
+        width: 100% !important;
+        max-width: 350px !important;
+    }
+
+    /* 6. Garante que as imagens não fiquem gigantes nem sumam */
+    .card img {
+        width: 100% !important;
+        height: 200px !important;
+        object-fit: cover;
     }
 }
