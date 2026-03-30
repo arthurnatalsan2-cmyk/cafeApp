@@ -1,0 +1,21 @@
+{
+  "short_name": "CaféApp",
+  "name": "Café App - Pedidos Online",
+  "icons": [
+    {
+      "src": "img/cafeapp.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "img/cafeapp.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "theme_color": "#6F4E37",
+  "description": "Peça seu café favorito direto pelo nosso app!"
+}
