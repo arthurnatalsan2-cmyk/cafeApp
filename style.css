@@ -1,5 +1,5 @@
 /* =========================================
-   1. VARIÁVEIS DE CORES E ANIMAÇÕES (O Segredo do visual Premium)
+   1. VARIÁVEIS DE CORES E ANIMAÇÕES (Design Premium)
    ========================================= */
 :root {
     --bg-color: #F4F1EA; /* Fundo creme bem suave */
@@ -30,17 +30,11 @@ body {
 }
 
 /* =========================================
-   2. ANIMAÇÕES (Keyframes)
+   2. ANIMAÇÕES
    ========================================= */
 @keyframes entradaSuave {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulseClick {
@@ -50,7 +44,7 @@ body {
 }
 
 /* =========================================
-   3. MENU LATERAL (PC)
+   3. MENU LATERAL (PC) E CABEÇALHO
    ========================================= */
 .sidebar, header {
     width: 250px;
@@ -88,7 +82,7 @@ body {
 .nav-menu button:hover, .sidebar button:hover {
     background-color: var(--bg-color);
     color: var(--primary-color);
-    transform: translateX(5px); /* Dá um passinho pro lado no hover */
+    transform: translateX(5px);
 }
 
 .nav-menu button.active {
@@ -98,7 +92,7 @@ body {
 }
 
 .btn-sair {
-    margin-top: auto; /* Empurra pro final da barra */
+    margin-top: auto;
     color: var(--danger) !important;
     border: 1px solid #fadbd8 !important;
 }
@@ -109,10 +103,10 @@ body {
 }
 
 /* =========================================
-   4. ÁREA PRINCIPAL E GRID DE PRODUTOS
+   4. ÁREA PRINCIPAL
    ========================================= */
 .main-content {
-    margin-left: 250px; /* Compensa a sidebar fixa */
+    margin-left: 250px;
     padding: 40px;
     flex: 1;
     animation: entradaSuave 0.8s ease-out;
@@ -126,7 +120,7 @@ body {
 }
 
 /* =========================================
-   5. CARDS DE PRODUTOS (Design Premium)
+   5. CARDS DE PRODUTOS
    ========================================= */
 .card {
     background: var(--card-bg);
@@ -137,7 +131,6 @@ body {
     display: flex;
     flex-direction: column;
     border: 1px solid rgba(0,0,0,0.02);
-    /* Aplica a animação de entrada no card */
     animation: entradaSuave 0.6s ease-out forwards;
 }
 
@@ -146,22 +139,21 @@ body {
     box-shadow: var(--shadow-hover);
 }
 
-/* Efeito de Zoom na Imagem */
 .card-img-container {
     width: 100%;
     height: 200px;
-    overflow: hidden; /* Mantém a imagem dentro das bordas arredondadas */
+    overflow: hidden;
 }
 
 .card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease; /* Transição lenta e elegante */
+    transition: transform 0.6s ease;
 }
 
 .card:hover img {
-    transform: scale(1.1); /* Dá zoom na foto quando passa o mouse */
+    transform: scale(1.1);
 }
 
 .card-info {
@@ -184,7 +176,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* Botão de Adicionar */
 .btn-adicionar {
     background-color: var(--accent-color);
     color: white;
@@ -195,7 +186,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: var(--transicao);
-    margin-top: auto; /* Joga o botão pro fundo do card */
+    margin-top: auto;
 }
 
 .btn-adicionar:hover {
@@ -204,18 +195,17 @@ body {
 }
 
 .btn-adicionar:active {
-    animation: pulseClick 0.2s; /* Dá um "soquinho" ao clicar */
+    animation: pulseClick 0.2s;
 }
 
 /* =========================================
-   6. RESPONSIVO (O Mágica do Celular)
+   6. RESPONSIVO (MOBILE) COM EFEITO VIDRO
    ========================================= */
 @media (max-width: 768px) {
     body {
         flex-direction: column;
     }
 
-    /* Menu superior com efeito "Vidro" (Glassmorphism) */
     .sidebar, header {
         width: 100%;
         height: auto;
@@ -225,35 +215,35 @@ body {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        background: rgba(255, 255, 255, 0.85); /* Fundo semi-transparente */
-        backdrop-filter: blur(10px); /* Efeito de vidro borrado no fundo */
-        -webkit-backdrop-filter: blur(10px); /* Para iPhones */
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border-bottom: 1px solid rgba(0,0,0,0.05);
         box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        z-index: 1000;
     }
 
     .nav-menu {
         margin-top: 0;
         flex-direction: row;
         gap: 10px;
-        overflow-x: auto; /* Menu rolável pros lados */
+        overflow-x: auto;
         padding-bottom: 5px;
     }
 
-    /* Esconde a barra de rolagem do menu no celular */
     .nav-menu::-webkit-scrollbar {
         display: none;
     }
 
     .nav-menu button, .sidebar button {
-        white-space: nowrap; /* Impede o texto de quebrar */
+        white-space: nowrap;
         padding: 10px 16px;
         font-size: 14px;
-        border-radius: 20px; /* Botões mais arredondados estilo pílula */
+        border-radius: 20px;
     }
 
     .nav-menu button:hover, .sidebar button:hover {
-        transform: none; /* Tira o efeito de mover pro lado no celular */
+        transform: none;
     }
 
     .main-content {
@@ -262,12 +252,12 @@ body {
     }
 
     .grid-produtos {
-        grid-template-columns: 1fr 1fr; /* 2 Produtos por linha */
+        grid-template-columns: 1fr 1fr;
         gap: 15px;
     }
 
     .card-img-container {
-        height: 140px; /* Imagens menores no celular */
+        height: 140px;
     }
 
     .card-info {
