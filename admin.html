@@ -62,6 +62,12 @@
     <div id="aviso"></div>
 
     <script type="module">
+
+        // PROTEÇÃO DE ROTA
+const isAdmin = localStorage.getItem("isAdmin") === "true";
+if (!isAdmin) {
+    window.location.href = "login.html"; // Redireciona se não for admin
+}
         // 1. IMPORTAÇÕES E CONFIGURAÇÃO
         import { db, ref, set, onValue, push, update, remove } from "./firebase-config.js";
 
@@ -179,25 +185,34 @@
 
         // 4. GRÁFICO (CHART.JS)
         function desenharGrafico(dadosEntregues) {
-            const ctx = document.getElementById('graficoVendas').getContext('2d');
-            if(meuGrafico) meuGrafico.destroy();
+    const ctx = document.getElementById('graficoVendas').getContext('2d');
+    if(window.meuGrafico) window.meuGrafico.destroy();
 
-            meuGrafico = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: dadosEntregues.map(p => p.fireId.slice(-4)),
-                    datasets: [{
-                        label: 'Vendas Recentes (R$)',
-                        data: dadosEntregues.map(p => p.total),
-                        borderColor: '#017143',
-                        backgroundColor: 'rgba(1, 113, 67, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, scales: { y: { beginAtZero: true } } }
-            });
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(1, 113, 67, 0.4)');
+    gradient.addColorStop(1, 'rgba(1, 113, 67, 0)');
+
+    window.meuGrafico = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dadosEntregues.map(p => p.fireId.slice(-4)),
+            datasets: [{
+                label: 'Vendas (R$)',
+                data: dadosEntregues.map(p => p.total),
+                borderColor: '#017143',
+                borderWidth: 3,
+                fill: true,
+                backgroundColor: gradient,
+                tension: 0.4 // Linhas suaves
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { grid: { display: false } }, x: { grid: { display: false } } }
         }
+    });
+}
 
         // Logout
         document.getElementById("btnSair").onclick = () => {

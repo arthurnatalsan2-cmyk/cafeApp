@@ -78,7 +78,7 @@
 
         // 2. ESTADO DA APLICAÇÃO
         let produtosBD = []; // Lista que vem do Firebase
-        let carrinho = [];
+        let carrinho = JSON.parse(localStorage.getItem("carrinho_salvo")) || [];
 
         // 3. CARREGAR PRODUTOS DO FIREBASE (REAL-TIME)
         onValue(ref(db, 'produtos'), (snapshot) => {
@@ -127,6 +127,7 @@
                 div.innerHTML = "<p style='opacity: 0.5; text-align: center; margin: 20px 0;'>Vazio.</p>";
                 document.getElementById("totalCarrinho").innerText = "R$ 0,00";
                 return;
+                localStorage.setItem("carrinho_salvo", JSON.stringify(carrinho));
             }
 
             div.innerHTML = "";

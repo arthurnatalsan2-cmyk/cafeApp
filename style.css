@@ -172,12 +172,41 @@ body.dark .menus { background: var(--card-escuro); }
     gap: 20px;
 }
 
-/* Login Box */
+/* FIX: TELA DE LOGIN ESTICADA */
 .login-container {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
+}
+
+/* A caixinha que segura os inputs do login para não esticar */
+.login-box, .login-container > div {
+    background: var(--card-claro);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px; /* ISSO RESOLVE O PROBLEMA DA IMAGEM */
+    text-align: center;
+}
+
+body.dark .login-box, body.dark .login-container > div {
+    background: var(--card-escuro);
+}
+
+/* NOVO: CONTAINER PREMIUM DO GRÁFICO (Chart.js) */
+.chart-card {
+    background: var(--card-claro);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-top: 20px;
+}
+
+body.dark .chart-card {
+    background: var(--card-escuro);
 }
 
 /* ==========================================================================
@@ -222,7 +251,7 @@ body.dark .menus { background: var(--card-escuro); }
 #aviso.erro { background: var(--cor-erro); }
 
 /* ==========================================================================
-   7. ANIMAÇÕES E RESPONSIVIDADE
+   7. ANIMAÇÕES E RESPONSIVIDADE (CELULAR CORRIGIDO EM BLOCO ÚNICO)
    ========================================================================== */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -233,46 +262,68 @@ body.dark .menus { background: var(--card-escuro); }
 .slide-in { transform: translateX(-100px); opacity: 0; }
 
 @media (max-width: 768px) {
+    /* Layout Base Mobile */
     .container-flex { flex-direction: column; }
-    .sidebar { width: 100%; min-height: auto; }
     .circulo { clip-path: circle(350px at center bottom); }
     .header { padding: 15px; }
-}
-/* --- ESTILO PARA CELULAR (Telas menores que 768px) --- */
-@media (max-width: 768px) {
-    
-    /* 1. Ajustar a Sidebar (Menu lateral) */
+
+    /* Ajuste da Sidebar para virar Menu Superior Deslizante */
     .sidebar {
         width: 100%;
+        min-height: auto;
         height: auto;
-        position: relative;
-        flex-direction: row; /* Transforma em barra horizontal no topo */
+        position: sticky;
+        top: 0;
         display: flex;
-        justify-content: space-around;
-        padding: 10px;
-    }
-
-    /* 2. Empilhar os Cards (Grade de produtos) */
-    .grid-produtos {
-        grid-template-columns: 1fr !important; /* Força ficar um abaixo do outro */
-        gap: 15px;
-        padding: 10px;
-    }
-
-    /* 3. Ajustar o conteúdo principal */
-    .main-content {
-        margin-left: 0; /* Remove o espaço da sidebar lateral */
+        flex-direction: row;
+        justify-content: flex-start; /* Alinha à esquerda para poder rolar */
+        align-items: center;
+        gap: 10px;
         padding: 15px;
+        overflow-x: auto; /* Permite rolar pro lado se tiver muitos botões */
+        z-index: 1000;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* 4. Esconder elementos que ocupam muito espaço */
-    canvas#graficoVendas {
-        display: none; /* Gráficos costumam ficar ruins no celular pequeno */
+    /* Oculta scrollbar para ficar mais bonito no celular */
+    .sidebar::-webkit-scrollbar { display: none; }
+
+    /* Botões da Sidebar no Celular */
+    .sidebar button {
+        flex: 0 0 auto; /* Impede que os botões esmaguem uns aos outros */
+        white-space: nowrap; /* Impede o texto de quebrar de linha */
+        padding: 10px 20px;
+        font-size: 14px;
+        border-radius: 20px;
     }
 
-    /* 5. Aumentar botões para facilitar o toque com o dedo */
-    button, input {
+    /* Conteúdo Principal */
+    .main-content { 
+        margin-left: 0; 
+        padding: 15px; 
+        width: 100%;
+    }
+
+    /* Grid Inteligente para Celular */
+    .grid-produtos {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Tenta encaixar 2 se a tela for grandinha, ou 1 se for bem pequena */
+        gap: 15px;
+    }
+
+    /* Aumentar inputs para facilitar toque */
+    input, select {
         height: 45px;
-        font-size: 16px !important;
+        font-size: 16px;
+    }
+
+    /* Gráfico Responsivo (Removido o display: none para ele aparecer no celular) */
+    .chart-card {
+        padding: 15px;
+        overflow-x: auto;
+    }
+    canvas#graficoVendas {
+        width: 100% !important;
+        height: auto !important;
+        min-width: 300px;
     }
 }
