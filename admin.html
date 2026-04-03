@@ -184,32 +184,51 @@ if (!isAdmin) {
         });
 
         // 4. GRÁFICO (CHART.JS)
-        function desenharGrafico(dadosEntregues) {
+       // 4. GRÁFICO (CHART.JS) - VERSÃO PREMIUM
+function desenharGrafico(dadosEntregues) {
     const ctx = document.getElementById('graficoVendas').getContext('2d');
     if(window.meuGrafico) window.meuGrafico.destroy();
 
+    // Criando um gradiente elegante para o fundo do gráfico
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(1, 113, 67, 0.4)');
-    gradient.addColorStop(1, 'rgba(1, 113, 67, 0)');
+    gradient.addColorStop(0, 'rgba(1, 113, 67, 0.4)'); // Verde Starbucks opaco
+    gradient.addColorStop(1, 'rgba(1, 113, 67, 0)');   // Transparente
 
     window.meuGrafico = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: dadosEntregues.map(p => p.fireId.slice(-4)),
+            // Pega os últimos 4 caracteres do ID do Firebase para não poluir o gráfico
+            labels: dadosEntregues.map(p => p.fireId ? p.fireId.slice(-4) : 'Pedido'), 
             datasets: [{
                 label: 'Vendas (R$)',
                 data: dadosEntregues.map(p => p.total),
-                borderColor: '#017143',
+                borderColor: '#017143',      // Verde Starbucks
                 borderWidth: 3,
-                fill: true,
-                backgroundColor: gradient,
-                tension: 0.4 // Linhas suaves
+                backgroundColor: gradient,   // Aplica o gradiente
+                fill: true,                  // Preenche a área abaixo da linha
+                tension: 0.4,                // Deixa a linha curva/suave
+                pointRadius: 5,              // Tamanho do ponto
+                pointBackgroundColor: '#017143',
+                pointBorderColor: '#fff',
+                pointHoverRadius: 7
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { grid: { display: false } }, x: { grid: { display: false } } }
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false } // Remove a legenda para um visual cleaner
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' }, // Linhas de grade sutis
+                    ticks: { callback: (value) => 'R$ ' + value }
+                },
+                x: {
+                    grid: { display: false } // Remove linhas verticais para limpar o visual
+                }
+            }
         }
     });
 }
